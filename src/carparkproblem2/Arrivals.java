@@ -29,7 +29,7 @@ class Arrivals extends Thread
         catch(InterruptedException e)
         {
             System.out.println("Thread interrupted: exiting without performing arrive");
-             System.out.println("Thread interrupted: exiting without performing arrive");
+          
         }
     }
 }
