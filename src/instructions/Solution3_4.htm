@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+
+<title>Solution 3.4 -Thread states and the use of notify and notifyAll.</title>
+
+<link rel="stylesheet" type="text/css" href="../../../../m362.css">
+
+</head>
+
+<body>
+<h1>Solution 3.4 -Thread states and the use of <code> notify</code> and <code> notifyAll</code>.</h1>
+
+<h2>Task A - Observing Thread states</h2>
+<h3> Sample Solution of the <code>main </code>method with the <code>StateReport</code> 
+objects</h3>
+
+<p>Here is one version of additions to the method <code>main</code>, which would be inserted after the threads have been created, 
+and before they are started</p>
+<pre>
+        StateReporter report1 = new StateReporter(t1, "depart t1");
+        StateReporter report2 = new StateReporter(t2, "depart t2");        
+        StateReporter report3 = new StateReporter(t3, "depart t3");        
+        StateReporter report4 = new StateReporter(t4, "depart t4");      
+        StateReporter report5 = new StateReporter(t5, "arrive t5");        
+        StateReporter report6 = new StateReporter(t6, "arrive t6");
+        StateReporter report7 = new StateReporter(t7, "arrive t7");        
+        StateReporter report8 = new StateReporter(t8, "arrive t8");
+       
+        report1.start();
+        report2.start();
+        report3.start();
+        report4.start();
+        report5.start();
+        report6.start();
+        report7.start();
+        report8.start();
+</pre>
+<h3>Note</h3>
+<p>For a more elegant solution we could have used an array of threads, and set up a <code>StateReporter</code> for each thread in a 
+<code>for</code> loop, as follows:
+</p>
+<pre>
+        Thread[] ths = new Thread[8];
+
+        ths[0] = new Departures(carpark);
+        ths[1] = new Departures(carpark);
+        ths[2] = new Departures(carpark);
+        ths[3] = new Departures(carpark);
+        
+        ths[4] = new Arrivals(carpark);
+        ths[5] = new Arrivals(carpark);       
+        ths[6] = new Arrivals(carpark);
+        ths[7] = new Arrivals(carpark);
+        
+        StateReporter[] sr = new StateReporter[8];
+        for (int i = 0; i &lt; ths.length; i++)
+        {
+           sr[i] = new StateReporter(ths[i], "noName");
+           sr[i].start();
+           ths[ths.length-1 - i].start();
+        }    
+
+</pre>
+<h2>Task B - Using <code>notify()</code> and <code>if</code></h2>
+
+<h3>Sample Solution for the <code>depart </code> and <code>arrive </code>methods</h3>
+<p>Here is our version of the <code>depart </code> and <code>arrive </code>methods using 
+<code>if</code> statements and
+<code> notify</code> instead of <code>while</code> loops and <code> notifyAll</code>:</p>
+
+<pre>
+    public synchronized void arrive() throws InterruptedException
+    {
+        //while (spaces.getCount() == 0)
+        if (spaces.getCount() == 0)
+        {
+            this.wait();
+        }
+                     
+        Thread.sleep(100);
+        spaces.decreaseByOne();
+        System.out.println("Arrived - free spaces = " + spaces.getCount());
+        // this.notifyAll();
+        this.notify();
+    }
+    
+    public synchronized void depart() throws InterruptedException
+    {
+        //while (spaces.getCount() == capacity)
+        if (spaces.getCount() == capacity)
+        {
+            this.wait();
+        }
+        Thread.sleep(100);
+        spaces.increaseByOne();
+        System.out.println("Departed - free spaces = " + spaces.getCount());
+        //this.notifyAll();
+        this.notify();
+    }
+</pre>
+<h3>Discussion - <code>while</code> loops and <code>if</code> statements</h3>
+
+<p>In the unit we discuss the importance of using a <code>while</code> loop when testing
+for the condition, rather than an <code>if</code> statement. In this activity we see the
+effect that an <code>if</code> statement can have. When the value of the variable<code>
+spaces</code> is -1, for example, this has happened because a departure thread
+was notified that the value of the <code>spaces</code> variable had changed,
+possibly from 1 to 0. Instead of the departure thread checking that the
+condition is now satisfied, it simply proceeds into the critical region, and
+decreases the value from 0 to -1. If we had used a <code>while</code> loop, the check
+would have taken place, and the departure thread would have had to wait longer, until
+the condition was properly satisfied.</p>
+
+</body>
+</html>

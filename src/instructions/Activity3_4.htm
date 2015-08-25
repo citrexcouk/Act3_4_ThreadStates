@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Activity 3.4 - Thread states and the use of notify and notifyAll.</title>
+
+<link rel="stylesheet" type="text/css" href="../../../../m362.css">
+</head>
+
+<body>
+<h1>Activity 3.4 - Thread states and the use of <code>notify</code> and <code>notifyAll</code>.</h1>
+
+<h2>Purpose </h2>
+
+<p>The purpose of this activity is to experiment with the <code>Thread</code>
+states, and to understand the difference between <code>notify</code> and <code>notifyAll</code>.
+</p>
+
+<p>You will be working on the car park problem as completed during
+activity 3.2, so make sure you have done that activity before you continue.
+</p>
+
+<h2>Materials </h2>
+<p>We have provided a project which has six classes: 
+<ul>	<li>The class <code>CarParkControl</code> which controls the arrival and 
+	departures of cars from a car park, with the methods <code>arrive</code> and <code>depart</code>. </li>
+<li>The class <code>Main</code> which has a <code>main</code> method to create
+  threads and to set them running.</li>
+<li>The classes <code>Arrivals</code> and <code>Departures</code>, both extending the <code>Thread</code> 
+  class, and both with a single method <code>run</code>.
+</li>
+<li>The <code>CarParkCounter</code> class which is a simple counter.</li>
+<li>The <code>StateReporter</code> class, (which we met in activity 2.4), and which
+  reports on the state of a given thread.</li></ul>
+
+<h2>Task A - Observing Thread states</h2>
+<p>In this activity you are asked to add instances of the <code>StateReporter</code>
+class to the <code>Main</code> class, in order to observe the changing states of
+the threads. You are also asked to experiment with <code>if</code> statements and
+<code>while</code> loops, and with <code>notify</code> and <code>notifyAll</code>, to note
+the different impact of these methods.</p>
+
+<h3>Instructions </h3>
+<ol>
+	<li><p>Study class <code>CarParkControl</code> and note that the methods <code>arrive
+      </code>and <code>depart</code> are as we discussed in activity 3.2, with
+      one difference: we added a call to <code>Thread.sleep(100)</code>. This statement is added in order
+      to make these methods last a bit longer, so that we can make observations
+      about the thread states. </p></li>
+	<li><p>In the <code>Main</code> class, a number of threads are created: 4
+      departures and 4 arrivals. We have limited the number of spaces in the car
+      park to 2. To observe the changing states of the threads do the following:</p>
+	<ul><li><p>In the <code> main</code> method, add instances of the <code>StateReporter</code> class for the threads
+        created. Set the reporters running. </p></li>
+       
+      <li><p>Run the project and observe the output. You should see the following states:
+        <code>NEW</code>, <code>RUNNABLE</code>, <code>TIMED-WAITING</code>, <code>BLOCKED</code> and <code>TERMINATED</code>.</p></li>
+       
+      <li><p>If no
+       <code>BLOCKED</code> state is reported, see whether it helps if you increase the length of the sleep period. </p></li>
+       
+      <li><p>If there is no <code>TIMED-WAITING</code> state reported, you can change the capacity of
+        the car park to 1. If that doesn't help, change the balance between
+        arrivals and departures, so that there are more departures than
+        arrivals. </p>
+        <p>Be aware
+      that if you do this your program will get stuck in an infinite loop, and that you
+      will have to terminate the process yourself. You can do this by selecting <strong>Run|Stop Build/Run:</strong> or by clicking 
+      on the close icon next to the run status information at the bottom right of the NetBeans IDE. </p></li>
+       
+      <li><p>Study the output from your program and make sure you understand why
+        the threads are in these states at the various moments.</p></li>
+       </ul>
+    </li>
+    </ol>
+    <H2>Task B - Using <code>notify()</code> and <code>if</code></H2>
+    
+      <p>In this task you will experiment with <code>notify</code> versus <code>notifyAll</code> and <code>if</code> versus <code>while</code>.
+
+<h3>Instructions</h3>       
+ <ol><li><p>Go back to the<code> main</code> method, and comment out the statements
+        relating to the <code>StateReporter</code> objects. Make sure you have 4 arrivals,
+        and 4 departures, and that the capacity of the car park is 2.</p></li>
+      <li><p>When you run the project, you should now only see the statements
+        relating to the value of the <code>spaces</code> variable. Note how
+        this changes from 2, to 1, to 0, and then up again etc. The variable <code>spaces</code>
+        is always in a valid state: it never exceeds the capacity (more than 2),
+        it never goes below the minimum (less than 0).</p></li>
+      <li><p>Make the following changes to the methods <code>arrive</code> and <code>depart</code>
+        in class <code>CarParkControl</code>: replace the <code>while</code> statements with
+        <code>if</code> statements, and change the <code>notifyAll</code> statements to <code>notify</code>
+        statements.</p></li>
+      <li><p>Now run the project again, and observe the output.</p>
+        <ul>
+          <li><p>You should see the program exhibiting erroneous behaviour. It is very likely that the variable <code>spaces</code> 
+          is now shown to be in an invalid state: -1, for example. It is also possible that the
+          project doesn't stop by itself, but gets stuck in deadlock.</p></li>
+        <li><p>If you don't observe this erroneous behaviour, you can tweak the
+          system again, by reducing the capacity of the car park to 1, or by
+          creating many more threads. This will increase the likelihood of
+          things going wrong.</p></li>
+        <li><p>Try to trace why the program is showing erroneous behaviour, and
+          make sure you understand what the effect of using an <code>if</code> statement is
+          versus a <code>while</code> statement. Similarly, understand the difference between
+          using <code>notify</code> and <code>notifyAll</code>.</p></li>
+        </ul>
+</ol>
+
+</body>
+</html>
